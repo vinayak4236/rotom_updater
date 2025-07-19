@@ -1,0 +1,94 @@
+from modules.speech_input import listen
+from modules.speech_output import speak
+from modules.chatbot import reply
+from modules.task_manager import execute_command
+from modules.memory import add_history   # <-- NEW
+import updater
+updater.check_and_update()
+from modules.scheduler import schedule_reminder, schedule_app, init_periodic_cleanup
+init_periodic_cleanup()   # starts the background cleaner
+
+from modules.personal_mode import run_personal_mode
+run_personal_mode()
+import requests
+import datetime as dt
+from modules.updater import check_and_update
+check_and_update()
+
+#!/usr/bin/env python3
+import os, sys, requests, json, hashlib, subprocess
+from modules.brain import think
+
+def self_update():
+    from modules.updater import check_and_apply_updates
+    check_and_apply_updates()
+
+if __name__ == "__main__":
+    self_update()
+    print("Rotom is thinking...")
+    think()
+def get_weather(city: str) -> str:
+    """Return a one-line weather summary for <city> using wttr.in."""
+    url = f"https://wttr.in/{city}?format=%l:+%c+%t,+humidity+%h,+wind+%w"
+    try:
+        r = requests.get(url, timeout=4)
+        if r.ok:
+            return r.text.strip()
+    except Exception:
+        pass
+    return "Sorry, I couldn't fetch the weather right now."
+
+def get_worldtime(place: str) -> str:
+    """Return local time for <place> using worldtimeapi.org."""
+    # worldtimeapi expects IANA zones, but we can try a fuzzy search
+    # by replacing spaces with underscores.
+    zone = place.title().replace(" ", "_")
+    url = f"https://worldtimeapi.org/api/timezone/{zone}"
+    try:
+        r = requests.get(url, timeout=3)
+        if r.ok:
+            data = r.json()
+            dt_obj = dt.datetime.fromisoformat(data["datetime"][:19])
+            return f"{place.title()}: {dt_obj.strftime('%Y-%m-%d %H:%M:%S %Z')}"
+    except Exception:
+        pass
+    return f"Sorry, I couldn't find a time zone for {place!r}."
+def get_text_input():
+    return input("⌨️ You: ")
+
+def main():
+    speak("Hi! I am Rotom. Would you like to use voice or text mode?")
+    mode = input("Choose mode (voice/text): ").strip().lower()
+
+    if mode not in ["voice", "text"]:
+        speak("Invalid input. Defaulting to text mode.")
+        mode = "text"
+
+    speak(f"{mode.capitalize()} mode enabled.")
+
+    while True:
+        if mode == "voice":
+            command = listen()
+        else:
+            command = get_text_input()
+
+        if not command:
+            continue
+
+        command = command.lower()
+
+        if "exit" in command or "quit" in command:
+            speak("Goodbye!")
+            break
+
+        result = execute_command(command)
+        if not result:
+            result = reply(command)
+
+        speak(result)
+        add_history(command, result)   # <-- NEW
+
+
+
+if __name__ == "__main__":
+    main()
