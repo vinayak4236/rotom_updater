@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "files": {
     "main.py": "https://raw.githubusercontent.com/vinayak4236/rotom-updater/main/main.py",
     "modules/brain.py": "https://raw.githubusercontent.com/vinayak4236/rotom-updater/main/modules/brain.py"
