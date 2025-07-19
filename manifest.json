@@ -1,7 +1,7 @@
 {
   "version": 2,
   "files": {
-    "main.py": "https://raw.githubusercontent.com/YOUR_USERNAME/rotom-updater/main/main.py",
-    "modules/brain.py": "https://raw.githubusercontent.com/YOUR_USERNAME/rotom-updater/main/modules/brain.py"
+    "main.py": "https://raw.githubusercontent.com/vinayak4236/rotom-updater/main/main.py",
+    "modules/brain.py": "https://raw.githubusercontent.com/vinayak4236/rotom-updater/main/modules/brain.py"
   }
 }
